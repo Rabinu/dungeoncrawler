@@ -1,0 +1,17 @@
+Speelveld
+  Bepaalde afmeting
+  Gevuld worden met kamer
+    kamers min max size
+  Start en eindpunt -> Random
+  Monsters
+  Health
+  Wapens
+  Levels
+  fog aan uit
+  map zichtbaar nadat je het gepasseerd hebt
+
+Player
+  HP
+  XP
+  ATT
+  Bewegen wasd of pijltjes

@@ -1,0 +1,23 @@
+.row{
+ display: table-row;
+ height: 10px;
+
+}
+
+.row .col{
+  display: table-cell;
+  border:1px solid;
+  width: 10px;
+  min-width: 10px;
+
+ //float: left;
+ //height: 100%;
+}
+
+.player{
+  background-color: green;
+}
+
+.room{
+  background-color: red;
+}
