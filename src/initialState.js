@@ -10,7 +10,7 @@ export const playingfieldInit = {
   max_enemy:'',
   playingfield:[],
   rooms:[],
-  max_rooms:2
+  max_rooms:3
 }
 
 

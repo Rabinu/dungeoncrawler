@@ -60,7 +60,7 @@ class MainApp extends React.Component {
                 playingfieldboard[h][w] = "room";
             }
           }*/
-          console.log(room.coordY[0],room.coordY[1],room.coordX[0],room.coordX[1])
+          //console.log(room.coordY[0],room.coordY[1],room.coordX[0],room.coordX[1])
           for (let h = room.coordY[0]; h <= room.coordY[1]; h++){
             for(let w = room.coordX[0]; w <= room.coordX[1]; w++){
                 playingfieldboard[h][w] = "room";
@@ -112,52 +112,54 @@ class MainApp extends React.Component {
         let hallcount = 0
 
         let minX = previousRoom.coordX[0] - room.width + 1;
-        minX < 0 ? minX = 0 : null;
+        //minX < 0 ? minX = 0 : null
         let maxX = previousRoom.coordX[1];
-        maxX > playingfield.width ? maxX = playingfield.width : null;
+        let minY = previousRoom.coordY[0] - room.height + 1;
+        let maxY = previousRoom.coordY[1];
 
-        let minY = previousRoom.coordY[0] - room.height - 1;
-        minY < 0 ? minY = 0 : null;
-        let maxY = previousRoom.coordY[1]  + room.height;
-        maxY > playingfield.height ? maxY = playingfield.height : null
 
 
         //create room around the previousroom by hallcount
         while (previousRoom.halls > hallcount){
 
 
-          switch(roomOrder[hallcount]){/*
+          switch(roomOrder[hallcount]){
             case 1://top
-              roomY = previousRoom.coordY[0]-2;
-              roomX = minX//this.generateRandom(minX,maxY)
+              roomY = minY - 2;
+              roomX = this.generateRandom(minX,maxX);
 
               break;
             case 2://right
-              roomY = minY
-              roomX = previousRoom.coordX[1]+2
+              roomY = this.generateRandom(minY,maxY);
+              roomX = previousRoom.coordX[1]+2;
 
               break;
             case 3://bottom
-              roomY = previousRoom.coordY[0]+2;
-              roomX = minX//this.generateRandom(minX,maxY)
+              roomY = previousRoom.coordY[1] + 2;
+              roomX = this.generateRandom(minX,maxX);
               break;
             case 4://left
-              roomY = minY;
-              roomX = previousRoom.coordX[0]-2
-            break;*/
-            default:
-              roomY = minY
-              roomX = this.generateRandom(minX,maxX)
+              roomY = this.generateRandom(minY,maxY);
+              roomX = minX - 2;
+            break;
 
           }
+
+          let coordX = [roomX,roomX+room.width-1];
+          let coordY = [roomY,roomY+room.height-1];
+
+          this.matchingNumbers(coordY,coordX);
+
+
           fieldRooms.push(
             {
-            coordX:[roomX,roomX+room.width-1],
-            coordY:[roomY,roomY+room.height-1],
+            coordX,
+            coordY,
             roomNumber: fieldRooms[fieldRooms.length-1].roomNumber+1,
             halls:this.generateRandom(1,4)
             }
           )
+
 
           hallcount++
 
@@ -298,6 +300,10 @@ class MainApp extends React.Component {
         [array[i], array[j]]=[array[j], array[i]]
     }
     return array;
+  }
+
+  matchingNumbers([a,b],[c,d]){
+    console.log("matching numbers ",a,b,c,d);
   }
 
   render() {
