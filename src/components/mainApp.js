@@ -104,6 +104,7 @@ class MainApp extends React.Component {
           halls:this.generateRandom(1,4)
           }
         )
+        this.matchingNumbers([roomX,roomX+room.width-1],[roomY,roomY+room.height-1]);
         currentRoomCount++
       } else {
         //create other rooms
@@ -148,18 +149,26 @@ class MainApp extends React.Component {
           let coordX = [roomX,roomX+room.width-1];
           let coordY = [roomY,roomY+room.height-1];
 
-          this.matchingNumbers(coordY,coordX);
 
 
-          fieldRooms.push(
-            {
-            coordX,
-            coordY,
-            roomNumber: fieldRooms[fieldRooms.length-1].roomNumber+1,
-            halls:this.generateRandom(1,4)
-            }
-          )
+          if (coordX[0] > 0 && coordX[1] < playingfield.width && coordY[0] > 0 && coordY[1] < playingfield.height ){
+              this.matchingNumbers(coordX,coordY,fieldRooms, callback => {
+                  console.log(callback);
+                if (callback === false) {
 
+                  fieldRooms.push(
+                    {
+                      coordX,
+                      coordY,
+                      roomNumber: fieldRooms[fieldRooms.length-1].roomNumber+1,
+                      halls:this.generateRandom(1,4)
+                    }
+                  )
+                }
+
+              })
+
+          }
 
           hallcount++
 
@@ -170,24 +179,10 @@ class MainApp extends React.Component {
         }
         hallcount = 0
 
-
-
-
-        //(maxX - minX) < room.width ? console.log("to small") : console.log("okay")
-
-
-
-
-
       }
-
-
     }
 
     callback(fieldRooms)
-
-
-
 
   /*
 
@@ -295,15 +290,29 @@ class MainApp extends React.Component {
 
   shuffleArray() {
     let array = [1,2,3,4]
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]]=[array[j], array[i]]
     }
     return array;
   }
 
-  matchingNumbers([a,b],[c,d]){
-    console.log("matching numbers ",a,b,c,d);
+  matchingNumbers(a,b,rooms, callback){
+    if (rooms !== undefined) {
+      rooms.map(room => {
+        for(let x = a[0]; x <= a[1]; x++){
+          if (x >= room.coordX[0] && x <= room.coordX[1]){
+            for(let y = b[0]; y <= b[1]; y++){
+              if (y >= room.coordY[0] && y <= room.coordY[1]){
+                console.log("overlap")
+                return callback(true);
+              }
+            }
+          }
+        }
+      })
+      return callback(false);
+    }
   }
 
   render() {
