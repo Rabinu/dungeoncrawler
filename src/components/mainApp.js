@@ -109,8 +109,9 @@ class MainApp extends React.Component {
       } else {
         //create other rooms
         const roomOrder = this.shuffleArray();
-        let previousRoom = fieldRooms[fieldRooms.length-1]
-        let hallcount = 0
+        let previousRoom = fieldRooms[fieldRooms.length-1];
+        let hallcount = 0;
+        let maxAttempts = 0;
 
         let minX = previousRoom.coordX[0] - room.width + 1;
         //minX < 0 ? minX = 0 : null
@@ -121,7 +122,7 @@ class MainApp extends React.Component {
 
 
         //create room around the previousroom by hallcount
-        while (previousRoom.halls > hallcount){
+        while (previousRoom.halls > hallcount && maxAttempts < 4){
 
 
           switch(roomOrder[hallcount]){
@@ -152,27 +153,27 @@ class MainApp extends React.Component {
 
 
           if (coordX[0] > 0 && coordX[1] < playingfield.width && coordY[0] > 0 && coordY[1] < playingfield.height ){
-              this.matchingNumbers(coordX,coordY,fieldRooms, callback => {
-                  console.log(callback);
-                if (callback === false) {
+              if (!this.matchingNumbers(coordX,coordY,fieldRooms)){
 
-                  fieldRooms.push(
-                    {
-                      coordX,
-                      coordY,
-                      roomNumber: fieldRooms[fieldRooms.length-1].roomNumber+1,
-                      halls:this.generateRandom(1,4)
-                    }
-                  )
+              fieldRooms.push(
+                {
+                  coordX,
+                  coordY,
+                  roomNumber: fieldRooms[fieldRooms.length-1].roomNumber+1,
+                  halls:this.generateRandom(1,4)
                 }
+              )
+              maxAttempts = 0
+              hallcount++
 
-              })
+              currentRoomCount++
+            } else {
+              maxAttempts++
+            }
 
           }
+          console.log("max attempts ",maxAttempts," hallcount ", hallcount," currentRoomCount ", currentRoomCount)
 
-          hallcount++
-
-          currentRoomCount++
           if (currentRoomCount === playingfield.max_rooms){
             break;
           }
@@ -297,21 +298,24 @@ class MainApp extends React.Component {
     return array;
   }
 
-  matchingNumbers(a,b,rooms, callback){
+
+// Function to see if rooms are overlapping
+  matchingNumbers(a,b,rooms){
+    let overlap = false;
     if (rooms !== undefined) {
       rooms.map(room => {
         for(let x = a[0]; x <= a[1]; x++){
-          if (x >= room.coordX[0] && x <= room.coordX[1]){
+          if (x >= room.coordX[0]-1 && x <= room.coordX[1]+1){
             for(let y = b[0]; y <= b[1]; y++){
-              if (y >= room.coordY[0] && y <= room.coordY[1]){
-                console.log("overlap")
-                return callback(true);
+              if (y >= room.coordY[0]-1 && y <= room.coordY[1]+1){
+
+                return overlap = true;
               }
             }
           }
         }
       })
-      return callback(false);
+      return overlap;
     }
   }
 
