@@ -70,18 +70,25 @@ class MainApp extends React.Component {
       })
 
       this.setState({playingfieldboard});
-    });
+    }, callback2 => {
+      callback2.map( hall => {
+        playingfieldboard[hall[1]][hall[0]] = "hall";
+        this.setState({playingfieldboard});
+      })
+      }
+    );
 
     //generate outerwall
 
   }
 
-  placeRooms(callback) {
+  placeRooms(callback,hola) {
     const {playingfield} = this.props.state;
     let currentRoomCount = 0;
     let fieldRooms = [];
     let fieldHalls = [];
-
+    let coordXHall = [];
+    let coordYHall = []
     while (currentRoomCount < playingfield.max_rooms) {
 
       let room = this.roomCreator();
@@ -125,7 +132,7 @@ class MainApp extends React.Component {
 
         //create room around the previousroom by hallcount
         //while (previousRoom.halls > hallcount && maxAttempts < 5){
-        console.log("previous room halls " + previousRoom.halls);
+        //console.log("previous room halls " + previousRoom.halls);
         while (previousRoom.halls > hallcount) {
 
           switch (roomOrder[hallcount]) {
@@ -158,7 +165,7 @@ class MainApp extends React.Component {
             ];
 
             if (coordX[0] > 0 && coordX[1] < playingfield.width && coordY[0] > 0 && coordY[1] < playingfield.height) {
-              console.log("kamer past in veld")
+              //console.log("kamer past in veld")
               if (!this.matchingNumbers(coordX, coordY, fieldRooms)) {
 
                 fieldRooms.push({
@@ -169,6 +176,28 @@ class MainApp extends React.Component {
                 });
 
                 //Bijbehorende hall plaatsing
+                /*
+                coordX
+                coordY
+                minX
+                maxX
+                minY
+                maxY
+                */
+
+
+
+               console.log([minX,maxX,minY,maxY])
+               console.log([coordX,coordY])
+
+
+
+                coordXHall = [];
+                coordYHall = [];
+
+
+
+
 
                 maxAttempts = 0
                 hallcount++
@@ -181,11 +210,11 @@ class MainApp extends React.Component {
               maxAttempts++
                //room = this.roomCreator();
             }
-            console.log("hall cycle");
-            console.log("max attempts ", maxAttempts, " hallcount ", hallcount);
+            //console.log("hall cycle");
+            //console.log("max attempts ", maxAttempts, " hallcount ", hallcount);
           }//end if max attempt for single room
           else{
-            console.log("max attepts bigger");
+            //console.log("max attepts bigger");
             hallcount++
             maxAttempts = 0;
           }
@@ -198,7 +227,7 @@ class MainApp extends React.Component {
 
       }
     } // While end roomcount
-    console.log("callback");
+    hola([[1,1],[1,2]])
     callback(fieldRooms)
 
   }
@@ -248,6 +277,9 @@ class MainApp extends React.Component {
           item.map((col) => {
             if (col === "room") {
               return (<div className="col room"/>)
+            }
+            if (col === "hall") {
+              return (<div className="col hall"/>)
             }
             return (<div className="col"/>)
           })
@@ -316,6 +348,8 @@ class MainApp extends React.Component {
       return overlap;
     }
   }
+
+
 
   render() {
 
