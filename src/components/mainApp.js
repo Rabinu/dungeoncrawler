@@ -21,31 +21,13 @@ class MainApp extends React.Component {
     const {playerState, playingfield} = this.props.state;
     const height = playingfield.height;
     const width = playingfield.width;
-
     let playingfieldboard = [];
 
-    const startroom = this.roomCreator();
-    const startroomX = this.generateRandom(0, (width - startroom.width));
-    const startroomY = this.generateRandom(0, (height - startroom.height));
-
-    const coordStartroom = {
-      roomNumber: 1,
-      coordX: [
-        startroomX, startroomX + startroom.width - 1
-      ],
-      coordY: [
-        startroomY, startroomY + startroom.height - 1
-      ]
-    }
 
     for (let h = 0; h <= height; h++) {
       let row = [];
       for (let w = 0; w <= width; w++) {
-        /*if (w >= startroomX && w < (startroomX + startroom.width) && h >= startroomY && h < (startroomY + startroom.height)) {
-          row.push('room')
-        } else {
-          row.push('wall')
-        }*/
+
         row.push('wall')
       }
       playingfieldboard.push(row)
@@ -53,8 +35,8 @@ class MainApp extends React.Component {
 
     //this.searchRooms(playingfieldboard)
 
-    this.placeRooms(callback => {
-      callback.map(room => {/*
+    this.placeRooms(callbackRooms => {
+      callbackRooms.map(room => {/*
           for(let h = room.coordY[0]; h <= room.coordY[1]; h++){
             for(let w = room.coordX[0]; h <= room.coordX[1]; w++){
                 playingfieldboard[h][w] = "room";
@@ -69,20 +51,21 @@ class MainApp extends React.Component {
 
       })
 
-      this.setState({playingfieldboard});
-    }, callback2 => {
-      callback2.map( hall => {
+      //this.setState({playingfieldboard});
+    }, callbackHalls => {
+      callbackHalls.map( hall => {
         playingfieldboard[hall[1]][hall[0]] = "hall";
-        this.setState({playingfieldboard});
+        //this.setState({playingfieldboard});
       })
       }
     );
 
-    //generate outerwall
+    playingfieldboard[playerState.location[1]][playerState.location[0]] = "player";
+    this.setState({playingfieldboard})
 
   }
 
-  placeRooms(callback,hola) {
+  placeRooms(callbackRooms,callbackHalls) {
     const {playingfield} = this.props.state;
     let currentRoomCount = 0;
     let fieldRooms = [];
@@ -123,6 +106,7 @@ class MainApp extends React.Component {
         let previousRoom = fieldRooms[fieldRooms.length - 1];
         let hallcount = 0;
         let maxAttempts = 0;
+        let roomSide = 0;
 
         let minX = previousRoom.coordX[0] - room.width + 1;
         //minX < 0 ? minX = 0 : null
@@ -139,20 +123,22 @@ class MainApp extends React.Component {
             case 1: //top
               roomY = minY - 2;
               roomX = this.generateRandom(minX, maxX);
-
+              roomSide = 1;
               break;
             case 2: //right
               roomY = this.generateRandom(minY, maxY);
               roomX = previousRoom.coordX[1] + 2;
-
+              roomSide = 2;
               break;
             case 3: //bottom
               roomY = previousRoom.coordY[1] + 2;
               roomX = this.generateRandom(minX, maxX);
+              roomSide = 3;
               break;
             case 4: //left
               roomY = this.generateRandom(minY, maxY);
               roomX = minX - 2;
+              roomSide = 4;
               break;
 
           }
@@ -176,30 +162,30 @@ class MainApp extends React.Component {
                 });
 
                 //Bijbehorende hall plaatsing
-                /*
-                coordX
-                coordY
-                minX
-                maxX
-                minY
-                maxY
-                */
 
+                switch (roomSide) {
+                  case 1: //top
+                    coordXHall = this.generateHall(previousRoom.coordX, coordX);
+                    coordYHall = coordY[1]+1;
+                    break;
+                  case 2: //right
+                    coordXHall = coordX[0]-1;
+                    coordYHall = this.generateHall(previousRoom.coordY, coordY);
+                    break;
+                  case 3: //bottom
+                    coordXHall = this.generateHall(previousRoom.coordX, coordX);
+                    coordYHall = coordY[0]-1;
+                    break;
+                  case 4: //left
+                    coordXHall = coordX[1]+1;
+                    coordYHall = this.generateHall(previousRoom.coordY, coordY);
+                    break;
 
-
-               console.log([minX,maxX,minY,maxY])
-               console.log([coordX,coordY])
-
-
-
+                }
+                fieldHalls.push([coordXHall,coordYHall]);
                 coordXHall = [];
                 coordYHall = [];
-
-
-
-
-
-                maxAttempts = 0
+                maxAttempts = 0;
                 hallcount++
                 currentRoomCount++
               } else {
@@ -227,13 +213,30 @@ class MainApp extends React.Component {
 
       }
     } // While end roomcount
-    hola([[1,1],[1,2]])
-    callback(fieldRooms)
+    callbackHalls(fieldHalls)
+    callbackRooms(fieldRooms)
 
   }
 
   generateRandom(min, max) {
     return Math.floor((Math.random() * (max - min + 1)) + min);
+  }
+
+  generateHall(oldRoom, newRoom) {
+    let minCoord = 0;
+    let maxCoord = 0;
+    if (oldRoom[0] < newRoom [0]){
+        minCoord = newRoom[0]
+    } else {
+      minCoord = oldRoom[0]
+    }
+
+    if(oldRoom[1] > newRoom[1]){
+      maxCoord = newRoom[1];
+    } else {
+    maxCoord = oldRoom[1];
+    }
+    return this.generateRandom(minCoord, maxCoord)
   }
 
   roomCreator() {
@@ -244,6 +247,10 @@ class MainApp extends React.Component {
     const height = this.generateRandom(minSize, maxSize);
     const width = this.generateRandom(minSize, maxSize);
     return {width, height, maxHalls};
+
+  }
+
+  updatePlayingField(){
 
   }
 
@@ -281,6 +288,9 @@ class MainApp extends React.Component {
             if (col === "hall") {
               return (<div className="col hall"/>)
             }
+            if (col === "player") {
+              return (<div className="col player"/>)
+            }
             return (<div className="col"/>)
           })
         }
@@ -290,7 +300,7 @@ class MainApp extends React.Component {
 
   test(e) {
 
-    /*
+
     let player = this.state.player;
     switch (e.keyCode) {
       case 87:
@@ -310,10 +320,11 @@ class MainApp extends React.Component {
         this.props.movePlayer(1, 0);
         break;
       default:
-        this.roomCreator();
+        //this.roomCreator();
     }
-    this.genField();
-*/
+    //this.genField();
+    //this.renderField();
+
   }
 
   shuffleArray() {

@@ -17,5 +17,5 @@ const render = () => ReactDOM.render(
 );
 
 render();
-//store.subscribe(render);
-//store.subscribe(()=>console.log(store.getState()));
+store.subscribe(render);
+store.subscribe(()=>console.log(store.getState()));

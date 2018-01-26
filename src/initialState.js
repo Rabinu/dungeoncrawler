@@ -22,5 +22,5 @@ export const playerStateInit = {
   xp: 0,
   weapon:'fist',
   attack: 10,
-  location:[4,4]
+  location:[4,10]
 }
