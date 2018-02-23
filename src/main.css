@@ -8,11 +8,11 @@
   width: 10px;
   min-width: 10px; }
 
-.player {
+.PLAYER {
   background-color: green; }
 
-.room {
+.ROOM {
   background-color: red; }
 
-.hall {
+.HALL {
   background-color: blue; }
