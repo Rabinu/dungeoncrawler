@@ -12,7 +12,7 @@ export const playingfieldInit = {
   rooms:[],
   roomSizeMin:5,
   roomSizeMax:15,
-  max_rooms:7
+  max_rooms:6
 }
 
 

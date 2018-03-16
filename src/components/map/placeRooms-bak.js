@@ -23,7 +23,7 @@ export default function placeRooms(state) {
     let roomY = 0;
 
     //create the first room
-    if (currentRoomCount === 0) {
+    if (fieldRooms.length === 0) {
       roomX = generateRandom((playingfield.width * 0.25), ((playingfield.width * 0.75) - room.width - 1));
       roomY = generateRandom((playingfield.height * 0.25), ((playingfield.height * 0.75) - room.height - 1));
       fieldRooms.push({
@@ -40,13 +40,12 @@ export default function placeRooms(state) {
       currentRoomCount++
 
     }
-
       //create other rooms
       const roomOrder = shuffleArray([TOP,BOTTOM,LEFT,RIGHT]);
       let previousRoom = fieldRooms[fieldRooms.length - 1];
       let hallcount = 0;
       let maxAttempts = 0;
-      let roomSide = '';
+      let roomSide = 0;
       let minX = previousRoom.coordX[0] - room.width + 1;
       let maxX = previousRoom.coordX[1];
       let minY = previousRoom.coordY[0] - room.height + 1;
@@ -55,10 +54,10 @@ export default function placeRooms(state) {
       //create room around the previousroom by hallcount
 
       //generate starting corner of the new room
-      while (previousRoom.halls > hallcount && maxAttempts < 5) {
+      while (previousRoom.halls > hallcount) {
         switch (roomOrder[hallcount]) {
           case TOP:
-            roomY = minY - 2
+            roomY = minY - 2;
             roomX = generateRandom(minX, maxX);
             roomSide = TOP;
             break;
@@ -79,6 +78,8 @@ export default function placeRooms(state) {
             break;
         }
 
+        if (maxAttempts < 5) {
+
           let coordX = [
             roomX, roomX + room.width - 1
           ];
@@ -86,8 +87,11 @@ export default function placeRooms(state) {
             roomY, roomY + room.height - 1
           ];
 
-          if (coordX[0] > 0 && coordX[1] < playingfield.width && coordY[0] > 0 && coordY[1] < playingfield.height && !matchingNumbers(coordX, coordY, fieldRooms)) {
+          if (coordX[0] > 0 && coordX[1] < playingfield.width && coordY[0] > 0 && coordY[1] < playingfield.height) {
+            //console.log("kamer past in veld")
 
+            if (!matchingNumbers(coordX, coordY, fieldRooms)) {
+              //controleren om kamers niet overlappen
               fieldRooms.push({
                 coordX,
                 coordY,
@@ -96,6 +100,7 @@ export default function placeRooms(state) {
               });
 
               //Bijbehorende hall plaatsing
+
               switch (roomSide) {
                 case TOP: //top
                   coordXHall = generateHall(previousRoom.coordX, coordX);
@@ -125,10 +130,13 @@ export default function placeRooms(state) {
               maxAttempts++
 
             }
+          } else {
+            maxAttempts++
 
+          }
           //console.log("hall cycle");
           //console.log("max attempts ", maxAttempts, " hallcount ", hallcount);
-         //end if max attempt for single room
+        } //end if max attempt for single room
         if (maxAttempts === 5){
           hallcount++
           maxAttempts = 0;

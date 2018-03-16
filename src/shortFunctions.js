@@ -2,9 +2,8 @@ export function generateRandom(min, max) {
   return Math.floor((Math.random() * (max - min + 1)) + min);
 }
 
-//shuffle array for hall order 
-export function shuffleArray() {
-  let array = [1, 2, 3, 4]
+//shuffle array for hall order
+export function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [

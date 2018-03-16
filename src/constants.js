@@ -4,3 +4,7 @@ export const WALL = 'WALL';
 export const ROOM = 'ROOM';
 export const HALL = 'HALL';
 export const PLAYER = 'PLAYER';
+export const TOP = 'TOP';
+export const BOTTOM = 'BOTTOM';
+export const LEFT = 'LEFT';
+export const RIGHT = 'RIGHT';
