@@ -11,19 +11,20 @@ export default function placeRooms(state) {
   const {
     playingfield
   } = state;
-  let currentRoomCount = 0;
+  let mapRoomCount = 0;
+  let currentRoomCount = 0
   let fieldRooms = [];
   let fieldHalls = [];
   let coordXHall = [];
   let coordYHall = [];
 
-  while (currentRoomCount < playingfield.max_rooms) {
+  while (mapRoomCount < playingfield.max_rooms) {
     let room = roomCreator(state);
     let roomX = 0;
     let roomY = 0;
 
     //create the first room
-    if (currentRoomCount === 0) {
+    if (mapRoomCount === 0) {
       roomX = generateRandom((playingfield.width * 0.25), ((playingfield.width * 0.75) - room.width - 1));
       roomY = generateRandom((playingfield.height * 0.25), ((playingfield.height * 0.75) - room.height - 1));
       fieldRooms.push({
@@ -37,13 +38,14 @@ export default function placeRooms(state) {
         halls: room.maxHalls
       })
 
-      currentRoomCount++
+      mapRoomCount++
 
     }
 
       //create other rooms
       const roomOrder = shuffleArray([TOP,BOTTOM,LEFT,RIGHT]);
-      let previousRoom = fieldRooms[fieldRooms.length - 1];
+
+      let previousRoom = fieldRooms[currentRoomCount];
       let hallcount = 0;
       let maxAttempts = 0;
       let roomSide = '';
@@ -120,28 +122,30 @@ export default function placeRooms(state) {
               coordYHall = [];
               maxAttempts = 0;
               hallcount++
-              currentRoomCount++
+              mapRoomCount++
             } else {
               maxAttempts++
 
             }
 
           //console.log("hall cycle");
-          //console.log("max attempts ", maxAttempts, " hallcount ", hallcount);
+        //  console.log("max attempts ", maxAttempts, " hallcount ", hallcount);
          //end if max attempt for single room
         if (maxAttempts === 5){
           hallcount++
           maxAttempts = 0;
           if(hallcount===previousRoom.halls){
+            mapRoomCount++
             currentRoomCount++
           }
         }
-        //console.log("max attempts ", maxAttempts, " hallcount ", hallcount, 'roomcount');
-        if (currentRoomCount === playingfield.max_rooms) {
+        console.log("max attempts ", maxAttempts, " hallcount ", hallcount, 'roomcount',currentRoomCount);
+        if (mapRoomCount === playingfield.max_rooms) {
           break;
         }
       } //While end hall count
       hallcount = 0
+      currentRoomCount++
 
 
   } // While end roomcount
